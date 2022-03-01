@@ -13,15 +13,23 @@ const App = () => {
 
   const updateFieldChanged = index => e => {
     let newArr = [...arrValues] 
+    let newValue = isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value)
 
     newArr[index] = {
       ...arrValues[index],
-      [e.target.name]:  parseInt(e.target.value)
+      [e.target.name]:  newValue
     }
-    
+
     setArrValues(newArr)
   }
   
+  const deleteArea = indexOfArray => {
+    if(indexOfArray > 0) {
+      const newArr = [...arrValues].filter((val, index) => index !== indexOfArray)
+      setArrValues(newArr)
+    }
+  }
+
   const addMoreInput = () => {
     setArrValues(prevArray => [
       ...prevArray,
@@ -35,17 +43,14 @@ const App = () => {
         {
           !!arrValues.length && arrValues.map((item, index) => (
             <div key={index}>
-              <label>
-                Altura: <input onChange={updateFieldChanged(index)} value={item.alt} type="number" name="alt" min="0" max="100"/>
-              </label>
-              <label>
-                Largura: <input onChange={updateFieldChanged(index)} value={item.lar} type="number" name="lar" min="0" max="100"/>
-              </label>
-              <span>Subtotal: {item.alt * item.lar} m2</span>
+              <input placeholder="largura" onChange={updateFieldChanged(index)} value={!!item.alt ? item.alt : ''} type="number" name="alt" min="0" max="100"/>
+              <input placeholder="comprimento" onChange={updateFieldChanged(index)} value={item.lar ? item.lar : ''} type="number" name="lar" min="0" max="100"/>
+              <span>{item.alt * item.lar} m2</span>
+              <button onClick={() => deleteArea(index)}>Limpar</button>
             </div>
           ))
         }
-        <button onClick={addMoreInput}>Adicionar outro cômodo</button>
+        <button onClick={addMoreInput}>Adicionar área</button>
       </div>
       {
         <p>Total:  {total}</p>
